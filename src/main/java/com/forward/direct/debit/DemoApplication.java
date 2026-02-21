@@ -1,0 +1,27 @@
+package com.forward.direct.debit;
+
+import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+@EnableProcessApplication
+public class DemoApplication implements CommandLineRunner {
+
+    @Autowired
+    private RuntimeService runtimeService;
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        // Start the process using the Process Definition Key from your BPMN file
+        runtimeService.startProcessInstanceByKey("direct-debit-process");
+        System.out.println("Process started!");
+    }
+}
