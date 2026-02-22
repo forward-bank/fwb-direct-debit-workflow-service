@@ -82,19 +82,11 @@ public class MQMessageListener implements MessageListener {
             // Process based on message type
             if (message instanceof TextMessage) {
                 processTextMessage((TextMessage) message);
-            } else if (message instanceof BytesMessage) {
-                processBytesMessage((BytesMessage) message);
-            } else if (message instanceof ObjectMessage) {
-                processObjectMessage((ObjectMessage) message);
-            } else if (message instanceof MapMessage) {
-                processMapMessage((MapMessage) message);
             } else {
                 System.out.println("│ Message Type: " + message.getClass().getSimpleName());
                 System.out.println("│ Content: [Unsupported message type]");
             }
 
-            // Display message properties if any
-            displayMessageProperties(message);
             triggerBusinessProcess(message);
 
             System.out.println("└─────────────────────────────────────────");
@@ -175,78 +167,6 @@ public class MQMessageListener implements MessageListener {
         } else {
             System.out.println("│ [Empty message]");
         }
-    }
-
-    /**
-     * Process BytesMessage
-     */
-    private void processBytesMessage(BytesMessage bytesMessage) throws JMSException {
-        long length = bytesMessage.getBodyLength();
-        System.out.println("│ Message Type: BytesMessage");
-        System.out.println("│ Content Length: " + length + " bytes");
-
-        if (length > 0 && length < 1024) {
-            byte[] data = new byte[(int) length];
-            bytesMessage.readBytes(data);
-            System.out.println("│ Content (hex): " + bytesToHex(data));
-        }
-    }
-
-    /**
-     * Process ObjectMessage
-     */
-    private void processObjectMessage(ObjectMessage objectMessage) throws JMSException {
-        Object object = objectMessage.getObject();
-        System.out.println("│ Message Type: ObjectMessage");
-        System.out.println("│ Object Type: " + (object != null ? object.getClass().getName() : "null"));
-        System.out.println("│ Content: " + object);
-    }
-
-    /**
-     * Process MapMessage
-     */
-    private void processMapMessage(MapMessage mapMessage) throws JMSException {
-        System.out.println("│ Message Type: MapMessage");
-        System.out.println("│ Map Entries:");
-
-        java.util.Enumeration<?> mapNames = mapMessage.getMapNames();
-        while (mapNames.hasMoreElements()) {
-            String name = (String) mapNames.nextElement();
-            Object value = mapMessage.getObject(name);
-            System.out.println("│   " + name + " = " + value);
-        }
-    }
-
-    /**
-     * Display custom message properties
-     */
-    private void displayMessageProperties(Message message) throws JMSException {
-        java.util.Enumeration<?> propertyNames = message.getPropertyNames();
-
-        if (propertyNames.hasMoreElements()) {
-            System.out.println("├─────────────────────────────────────────");
-            System.out.println("│ CUSTOM PROPERTIES:");
-
-            while (propertyNames.hasMoreElements()) {
-                String propertyName = (String) propertyNames.nextElement();
-                Object propertyValue = message.getObjectProperty(propertyName);
-                System.out.println("│   " + propertyName + " = " + propertyValue);
-            }
-        }
-    }
-
-    /**
-     * Convert bytes to hex string
-     */
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < Math.min(bytes.length, 50); i++) {
-            sb.append(String.format("%02X ", bytes[i]));
-        }
-        if (bytes.length > 50) {
-            sb.append("...");
-        }
-        return sb.toString();
     }
 
     /**
