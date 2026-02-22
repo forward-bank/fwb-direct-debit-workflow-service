@@ -1,14 +1,21 @@
 package com.forward.direct.debit.listener;
 
+import com.forward.direct.debit.executor.CamundaProcessExecutor;
+
 import javax.jms.*;
+import java.lang.IllegalStateException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Asynchronous message listener for IBM MQ
  * Listens and consumes messages as they arrive in the queue
  */
+
 public class MQMessageListener implements MessageListener {
 
     private final String queueName;
@@ -16,10 +23,16 @@ public class MQMessageListener implements MessageListener {
     private final DateTimeFormatter formatter;
     private MessageConsumer consumer;
 
-    public MQMessageListener(String queueName) {
+    // Use constructor injection because this class is instantiated with `new` in configuration
+    private final CamundaProcessExecutor camundaProcessExecutor;
+    private final String processDefinitionKey;
+
+    public MQMessageListener(String queueName, CamundaProcessExecutor camundaProcessExecutor, String processDefinitionKey) {
         this.queueName = queueName;
         this.messageCount = new AtomicInteger(0);
         this.formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        this.camundaProcessExecutor = camundaProcessExecutor;
+        this.processDefinitionKey = processDefinitionKey;
     }
 
     /**
@@ -30,7 +43,7 @@ public class MQMessageListener implements MessageListener {
         System.out.println("Initializing Message Listener");
         System.out.println("=========================================");
         System.out.println("Queue: " + queueName);
-        System.out.println("=========================================\n");
+        System.out.println("=========================================" + "\n");
         // Get the queue
         Queue queue = connectionManager.getSession().createQueue(queueName);
         // Create message consumer
@@ -82,15 +95,54 @@ public class MQMessageListener implements MessageListener {
 
             // Display message properties if any
             displayMessageProperties(message);
+            triggerBusinessProcess(message);
 
             System.out.println("└─────────────────────────────────────────");
             System.out.println("✓ Message #" + currentCount + " processed successfully\n");
 
         } catch (JMSException e) {
-            System.err.println("\n✗ Error processing message #" + currentCount);
-            System.err.println("Error: " + e.getMessage());
+            System.err.println("JMS error: " + e.getMessage());
+        } catch (Exception e) {  // <-- prevent exceptions from propagating and causing redelivery loops
+            System.err.println("Unexpected error processing message: " + e.getMessage());
             e.printStackTrace();
+            // With AUTO_ACKNOWLEDGE the message is already acknowledged; do not rethrow unless you want redelivery
         }
+    }
+
+    private void triggerBusinessProcess(Message message) throws JMSException {
+        String businessKey = message.getJMSMessageID();
+        Map<String, Object> vars = extractProcessVariables(message);
+
+        // camundaProcessExecutor is now injected via constructor; guard just in case
+        if (camundaProcessExecutor == null) {
+            throw new IllegalStateException("CamundaProcessExecutor is not initialized");
+        }
+
+        Future<String> future = camundaProcessExecutor.triggerProcess(
+                processDefinitionKey,
+                businessKey,
+                vars
+        );
+
+        System.out.println("│ ✓ BusinessProcessExecutionThread submitted (businessKey=" + businessKey + ")");
+    }
+
+    /**
+     * Extract all JMS message data into a flat map before handing off to worker thread.
+     * IMPORTANT: JMS Message objects must be read on the listener thread, not the worker thread.
+     */
+    private Map<String, Object> extractProcessVariables(Message message) throws JMSException {
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("jmsMessageId",    message.getJMSMessageID());
+        vars.put("jmsCorrelationId", message.getJMSCorrelationID());
+        vars.put("jmsPriority",     message.getJMSPriority());
+        vars.put("jmsTimestamp",    message.getJMSTimestamp());
+        vars.put("sourceQueue",     queueName);
+        if (message instanceof TextMessage) {
+            vars.put("messageType",    "TEXT");
+            vars.put("messagePayload", ((TextMessage) message).getText());
+        }
+        return vars;
     }
 
     /**
@@ -218,3 +270,4 @@ public class MQMessageListener implements MessageListener {
         return messageCount.get();
     }
 }
+

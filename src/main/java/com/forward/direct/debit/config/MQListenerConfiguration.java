@@ -2,6 +2,7 @@ package com.forward.direct.debit.config;
 
 import com.forward.direct.debit.listener.MQConnectionManager;
 import com.forward.direct.debit.listener.MQMessageListener;
+import com.forward.direct.debit.executor.CamundaProcessExecutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,13 +33,16 @@ public class MQListenerConfiguration {
     @Value("${ibm.mq.queue:FIRST.TEST.QUEUE}")
     private String queueName;
 
+    @Value("${camunda.process.definition.key:direct-debit-process}")
+    private String processDefinitionKey;
+
     /**
      * Create and configure the MQ Listener Service bean
      * Spring will automatically call init() and shutdown() methods
      */
     @Bean(initMethod = "init", destroyMethod = "shutdown")
-    public MQListenerService mqListenerService() {
-        return new MQListenerService(host, port, channel, queueManager, queueName);
+    public MQListenerService mqListenerService(CamundaProcessExecutor camundaProcessExecutor) {
+        return new MQListenerService(host, port, channel, queueManager, queueName, camundaProcessExecutor, processDefinitionKey);
     }
 
     /**
@@ -50,17 +54,21 @@ public class MQListenerConfiguration {
         private final String channel;
         private final String queueManager;
         private final String queueName;
+        private final CamundaProcessExecutor camundaProcessExecutor;
+        private final String processDefinitionKey;
 
         private MQConnectionManager connectionManager;
         private MQMessageListener messageListener;
 
         public MQListenerService(String host, int port, String channel,
-                                 String queueManager, String queueName) {
+                                 String queueManager, String queueName, CamundaProcessExecutor camundaProcessExecutor, String processDefinitionKey) {
             this.host = host;
             this.port = port;
             this.channel = channel;
             this.queueManager = queueManager;
             this.queueName = queueName;
+            this.camundaProcessExecutor = camundaProcessExecutor;
+            this.processDefinitionKey = processDefinitionKey;
         }
 
         /**
@@ -84,7 +92,7 @@ public class MQListenerConfiguration {
                 connectionManager.connect();
 
                 // Create and initialize message listener
-                messageListener = new MQMessageListener(queueName);
+                messageListener = new MQMessageListener(queueName, camundaProcessExecutor, processDefinitionKey);
                 messageListener.initialize(connectionManager);
 
                 System.out.println("✓ IBM MQ Listener started successfully\n");
