@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
 @EnableProcessApplication
-public class DemoApplication implements CommandLineRunner {
+public class DirectDebitWorkflowApplication implements CommandLineRunner {
 
     @Autowired
     private RuntimeService runtimeService;
@@ -19,7 +19,7 @@ public class DemoApplication implements CommandLineRunner {
     private ApplicationContext applicationContext;
 
     public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
+        SpringApplication.run(DirectDebitWorkflowApplication.class, args);
     }
 
     @Override
