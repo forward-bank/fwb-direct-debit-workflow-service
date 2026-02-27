@@ -5,7 +5,7 @@
       <bpmn:outgoing>Flow_1</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent" targetRef="SayHelloTask" />
-    <bpmn:serviceTask id="SayHelloTask" name="Validate Message" camunda:class="com.forward.direct.debit.app.LoggerDelegate">
+    <bpmn:serviceTask id="SayHelloTask" name="Validate Message" camunda:class="com.forward.direct.debit.camunda.task.executor.TaskExecutor">
       <bpmn:incoming>Flow_1</bpmn:incoming>
       <bpmn:outgoing>Flow_2</bpmn:outgoing>
     </bpmn:serviceTask>

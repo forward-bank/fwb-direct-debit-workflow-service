@@ -1,0 +1,8 @@
+{
+  "tasks": [
+    {
+      "taskName": "loggerTask",
+      "executorClass": "com.example.tasks.LoggerTask"
+    }
+  ]
+}
