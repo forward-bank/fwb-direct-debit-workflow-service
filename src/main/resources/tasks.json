@@ -1,8 +1,8 @@
 {
   "tasks": [
     {
-      "taskName": "loggerTask",
-      "executorClass": "com.example.tasks.LoggerTask"
+      "taskName": "message_validation_task",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.MessageValidationTaskExecutor"
     }
   ]
 }

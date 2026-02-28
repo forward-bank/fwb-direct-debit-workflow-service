@@ -4,12 +4,12 @@
     <bpmn:startEvent id="StartEvent" name="Incoming Message">
       <bpmn:outgoing>Flow_1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent" targetRef="SayHelloTask" />
-    <bpmn:serviceTask id="SayHelloTask" name="Validate Message" camunda:class="com.forward.direct.debit.camunda.task.executor.TaskExecutor">
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent" targetRef="message_validation_task" />
+    <bpmn:serviceTask id="message_validation_task" name="Validate Message" camunda:class="com.forward.direct.debit.camunda.task.executor.CamundaTaskExecutor">
       <bpmn:incoming>Flow_1</bpmn:incoming>
       <bpmn:outgoing>Flow_2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_2" sourceRef="SayHelloTask" targetRef="EndEvent" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="message_validation_task" targetRef="EndEvent" />
     <bpmn:endEvent id="EndEvent" name="End">
       <bpmn:incoming>Flow_2</bpmn:incoming>
     </bpmn:endEvent>
@@ -22,7 +22,7 @@
           <dc:Bounds x="147" y="146" width="45" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="SayHelloTask_di" bpmnElement="SayHelloTask">
+      <bpmndi:BPMNShape id="message_validation_task_di" bpmnElement="message_validation_task">
         <dc:Bounds x="360" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>

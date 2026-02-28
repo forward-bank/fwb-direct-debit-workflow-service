@@ -16,11 +16,11 @@ public  class CamundaTaskExecutor extends AbstractBpmnActivityBehavior {
         String currentActivityId = execution.getCurrentActivityId();
 
         //TaskDefinition taskDefinition = CamundaSetup.getInstance().getTaskMap().
-        CamundaTaskExecutor taskExecutor = CamundaBPMHelper.getTaskExecutor(currentActivityId);
-        taskExecutor.
-        TaskContext context = new TaskContext(execution);
-        taskDefinition.execute(context);
-        leave(execution);  // ← this is the key difference from JavaDelegate
+        TaskExecutor taskExecutor = CamundaBPMHelper.getTaskExecutor(currentActivityId);
+        taskExecutor.executeTask();
+//        TaskContext context = new TaskContext(execution);
+//        taskDefinition.execute(context);
+        //leave(execution);  // ← this is the key difference from JavaDelegate
     }
 
     @Override
