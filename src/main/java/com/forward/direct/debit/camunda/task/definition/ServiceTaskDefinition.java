@@ -4,6 +4,7 @@ import com.forward.direct.debit.camunda.task.common.TaskContext;
 
 public abstract class ServiceTaskDefinition {
 
-    public abstract void execute(TaskContext context) throws Exception;
+    public abstract void execute() throws Exception;
+
 
 }

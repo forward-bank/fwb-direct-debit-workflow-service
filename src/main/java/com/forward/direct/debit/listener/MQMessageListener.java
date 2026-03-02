@@ -63,34 +63,35 @@ public class MQMessageListener implements MessageListener {
      */
     @Override
     public void onMessage(Message message) {
+        System.out.println("<<<<<< MQMessageListener received a message >>>>>>>>");
         int currentCount = messageCount.incrementAndGet();
         String timestamp = LocalDateTime.now().format(formatter);
 
         try {
-            System.out.println("\n┌─────────────────────────────────────────");
-            System.out.println("│ MESSAGE RECEIVED #" + currentCount);
-            System.out.println("├─────────────────────────────────────────");
-            System.out.println("│ Timestamp: " + timestamp);
-            System.out.println("│ Message ID: " + message.getJMSMessageID());
-            System.out.println("│ Correlation ID: " + (message.getJMSCorrelationID() != null ?
-                    message.getJMSCorrelationID() : "N/A"));
-            System.out.println("│ Priority: " + message.getJMSPriority());
-            System.out.println("│ Delivery Mode: " + (message.getJMSDeliveryMode() == DeliveryMode.PERSISTENT ?
-                    "PERSISTENT" : "NON_PERSISTENT"));
-            System.out.println("├─────────────────────────────────────────");
+//            System.out.println("\n┌─────────────────────────────────────────");
+//            System.out.println("│ MESSAGE RECEIVED #" + currentCount);
+//            System.out.println("├─────────────────────────────────────────");
+//            System.out.println("│ Timestamp: " + timestamp);
+//            System.out.println("│ Message ID: " + message.getJMSMessageID());
+//            System.out.println("│ Correlation ID: " + (message.getJMSCorrelationID() != null ?
+//                    message.getJMSCorrelationID() : "N/A"));
+//            System.out.println("│ Priority: " + message.getJMSPriority());
+//            System.out.println("│ Delivery Mode: " + (message.getJMSDeliveryMode() == DeliveryMode.PERSISTENT ?
+//                    "PERSISTENT" : "NON_PERSISTENT"));
+//            System.out.println("├─────────────────────────────────────────");
 
             // Process based on message type
-            if (message instanceof TextMessage) {
-                processTextMessage((TextMessage) message);
-            } else {
-                System.out.println("│ Message Type: " + message.getClass().getSimpleName());
-                System.out.println("│ Content: [Unsupported message type]");
-            }
+//            if (message instanceof TextMessage) {
+//                processTextMessage((TextMessage) message);
+//            } else {
+//                System.out.println("│ Message Type: " + message.getClass().getSimpleName());
+//                System.out.println("│ Content: [Unsupported message type]");
+//            }
 
             triggerBusinessProcess(message);
 
-            System.out.println("└─────────────────────────────────────────");
-            System.out.println("✓ Message #" + currentCount + " processed successfully\n");
+//            System.out.println("└─────────────────────────────────────────");
+//            System.out.println("✓ Message #" + currentCount + " processed successfully\n");
 
         } catch (JMSException e) {
             System.err.println("JMS error: " + e.getMessage());

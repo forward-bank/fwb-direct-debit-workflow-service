@@ -1,34 +1,41 @@
 package com.forward.direct.debit.camunda.task.common;
 
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.impl.pvm.delegate.ActivityExecution;
 
 import java.util.Map;
 
 public class TaskContext {
 
-    private final ActivityExecution execution;
+    private  DelegateExecution delegateExecution;
+    private ExecutionContext executionContext;
 
-    public TaskContext(ActivityExecution execution) {
-        this.execution = execution;
+    public TaskContext(DelegateExecution delegateExecution, ExecutionContext executionContext) {
+        this.delegateExecution = delegateExecution;
+        this.executionContext = executionContext;
     }
 
-    public String getTaskName() {
-        return execution.getActivity().getId();
+    public String getTaskId() {
+        return delegateExecution.getCurrentActivityId();
     }
 
     public String getProcessInstanceId() {
-        return execution.getProcessInstanceId();
+        return delegateExecution.getProcessInstanceId();
+    }
+
+    public String getProcessBusinessKey() {
+        return delegateExecution.getProcessBusinessKey();
     }
 
     public Object getVariable(String name) {
-        return execution.getVariable(name);
+        return executionContext.getVariable(name);
     }
 
     public void setVariable(String name, Object value) {
-        execution.setVariable(name, value);
+        executionContext.setVariable(name, value);
     }
 
-    public Map<String, Object> getVariables() {
-        return execution.getVariables();
-    }
+//    public Map<String, Object> getVariables() {
+//        return executionContext.getVariables();
+//    }
 }
