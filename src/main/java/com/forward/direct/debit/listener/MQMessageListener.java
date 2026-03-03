@@ -68,31 +68,7 @@ public class MQMessageListener implements MessageListener {
         String timestamp = LocalDateTime.now().format(formatter);
 
         try {
-//            System.out.println("\n┌─────────────────────────────────────────");
-//            System.out.println("│ MESSAGE RECEIVED #" + currentCount);
-//            System.out.println("├─────────────────────────────────────────");
-//            System.out.println("│ Timestamp: " + timestamp);
-//            System.out.println("│ Message ID: " + message.getJMSMessageID());
-//            System.out.println("│ Correlation ID: " + (message.getJMSCorrelationID() != null ?
-//                    message.getJMSCorrelationID() : "N/A"));
-//            System.out.println("│ Priority: " + message.getJMSPriority());
-//            System.out.println("│ Delivery Mode: " + (message.getJMSDeliveryMode() == DeliveryMode.PERSISTENT ?
-//                    "PERSISTENT" : "NON_PERSISTENT"));
-//            System.out.println("├─────────────────────────────────────────");
-
-            // Process based on message type
-//            if (message instanceof TextMessage) {
-//                processTextMessage((TextMessage) message);
-//            } else {
-//                System.out.println("│ Message Type: " + message.getClass().getSimpleName());
-//                System.out.println("│ Content: [Unsupported message type]");
-//            }
-
             triggerBusinessProcess(message);
-
-//            System.out.println("└─────────────────────────────────────────");
-//            System.out.println("✓ Message #" + currentCount + " processed successfully\n");
-
         } catch (JMSException e) {
             System.err.println("JMS error: " + e.getMessage());
         } catch (Exception e) {  // <-- prevent exceptions from propagating and causing redelivery loops
@@ -133,41 +109,9 @@ public class MQMessageListener implements MessageListener {
         vars.put("sourceQueue",     queueName);
         if (message instanceof TextMessage) {
             vars.put("messageType",    "TEXT");
-            vars.put("messagePayload", ((TextMessage) message).getText());
+            vars.put("inputMessage", ((TextMessage) message).getText());
         }
         return vars;
-    }
-
-    /**
-     * Process TextMessage
-     */
-    private void processTextMessage(TextMessage textMessage) throws JMSException {
-        String text = textMessage.getText();
-        System.out.println("│ Message Type: TextMessage");
-        System.out.println("│ Content Length: " + (text != null ? text.length() : 0) + " characters");
-        System.out.println("├─────────────────────────────────────────");
-        System.out.println("│ MESSAGE CONTENT:");
-        System.out.println("├─────────────────────────────────────────");
-
-        if (text != null && text.length() > 0) {
-            // Split long messages into multiple lines
-            String[] lines = text.split("\n");
-            for (String line : lines) {
-                if (line.length() <= 70) {
-                    System.out.println("│ " + line);
-                } else {
-                    // Wrap long lines
-                    int start = 0;
-                    while (start < line.length()) {
-                        int end = Math.min(start + 70, line.length());
-                        System.out.println("│ " + line.substring(start, end));
-                        start = end;
-                    }
-                }
-            }
-        } else {
-            System.out.println("│ [Empty message]");
-        }
     }
 
     /**

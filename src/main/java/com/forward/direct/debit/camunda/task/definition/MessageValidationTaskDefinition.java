@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forward.direct.debit.camunda.model.InputMessage;
 import com.forward.direct.debit.camunda.task.common.ExecutionContext;
-import com.forward.direct.debit.camunda.task.common.TaskContext;
 
 import java.util.Optional;
 
@@ -19,8 +18,11 @@ public class MessageValidationTaskDefinition extends ServiceTaskDefinition {
     public void execute() throws Exception {
         System.out.println("=".repeat(80));
         System.out.println("MessageValidationTaskDefinition Executing Message Validation Task...");
-        // System.out.println("Process Instance ID: " + context.getProcessInstanceId());
-        parseInputMessage();
+        // implement a method to print all the variables in executionContext for debugging
+        System.out.println("Execution Context Variables:");
+        executionContext.getVariables().forEach((key, value) -> {
+            System.out.println(key + ": " + value);
+        });
         System.out.println("=".repeat(80));
     }
 

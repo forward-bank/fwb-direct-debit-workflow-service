@@ -5,15 +5,24 @@ import java.util.Map;
 
 public class ExecutionContextImpl implements ExecutionContext{
 
-    private Map<String,Object> variableMap = new HashMap<>();
+    private Map<String,Object> variablesMap = new HashMap<>();
+
+    public ExecutionContextImpl(Map<String,Object> variablesMap) {
+        this.variablesMap = variablesMap;
+    }
 
     @Override
     public Object getVariable(String key) {
-        return variableMap.get(key);
+        return variablesMap.get(key);
     }
 
     @Override
     public void setVariable(String key, Object value) {
-        variableMap.put(key, value);
+        variablesMap.put(key, value);
+    }
+
+    @Override
+    public Map<String, Object> getVariables() {
+        return variablesMap;
     }
 }
