@@ -5,5 +5,5 @@ import com.forward.direct.debit.camunda.task.common.TaskContext;
 
 public interface TaskExecutor {
 
-        void executeTask(TaskContext taskContext) throws Exception;
+        void executeTask(ExecutionContext executionContext) throws Exception;
 }

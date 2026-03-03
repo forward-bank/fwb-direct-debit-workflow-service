@@ -117,7 +117,7 @@ public class MQMessageListener implements MessageListener {
                 vars
         );
 
-        System.out.println("│ ✓ BusinessProcessExecutionThread submitted (businessKey=" + businessKey + ")");
+        // System.out.println("│ ✓ BusinessProcessExecutionThread submitted (businessKey=" + businessKey + ")");
     }
 
     /**

@@ -10,9 +10,9 @@ public class CamundaBPMHelper {
     private static Map<String,Object> taskExecutorInstanceMap = new ConcurrentHashMap<>();
 
     public static TaskExecutor getTaskExecutor(String taskActivityId) {
-        System.out.println("Retrieving Task Executor for Task Activity ID: " + taskActivityId);
+        System.out.println("CamundaBPMHelper Retrieving Task Executor for Task Activity ID: " + taskActivityId);
         String executorClassName = CamundaSetup.getInstance().getTaskMap().get(taskActivityId);
-        System.out.println("Mapped Executor Class Name: " + executorClassName);
+
         try {
              if(!taskExecutorInstanceMap.containsKey(executorClassName)){
                  Class<?> taskExecutorClass = Class.forName(executorClassName);

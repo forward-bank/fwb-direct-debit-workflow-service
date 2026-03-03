@@ -5,7 +5,7 @@ import org.camunda.bpm.engine.impl.pvm.delegate.ActivityExecution;
 
 import java.util.Map;
 
-public class TaskContext {
+public class TaskContext implements ExecutionContext{
 
     private  DelegateExecution delegateExecution;
     private ExecutionContext executionContext;

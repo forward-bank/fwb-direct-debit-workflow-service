@@ -39,8 +39,7 @@ public class BusinessProcessExecutionThread implements Callable<String> {
     public String call() throws BusinessProcessExecutionException {
         String threadName = Thread.currentThread().getName();
 
-        System.out.println("[" + threadName + "] Starting Camunda business process...");
-        System.out.println("  Process Key  : " + processDefinitionKey);
+        System.out.println("[" + threadName + "] BusinessProcessExecutionThread call() Starting Camunda business process...");
         System.out.println("  Business Key : " + businessKey);
 
         try {
@@ -54,7 +53,6 @@ public class BusinessProcessExecutionThread implements Callable<String> {
 
             System.out.println("[" + threadName + "] ✓ Process instance started successfully");
             System.out.println("  Instance ID  : " + processInstanceId);
-            System.out.println("  Definition   : " + instance.getProcessDefinitionId());
 
             return processInstanceId;  // returned via Future<String>.get()
 
