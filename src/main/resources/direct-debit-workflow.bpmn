@@ -9,10 +9,25 @@
       <bpmn:incoming>Flow_1</bpmn:incoming>
       <bpmn:outgoing>Flow_2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_2" sourceRef="message_validation_task" targetRef="EndEvent" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="message_validation_task" targetRef="Gateway_14urywv" />
     <bpmn:endEvent id="EndEvent" name="End">
-      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:incoming>Flow_1okvabc</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_14urywv">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_19a2oad</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0kni9ru</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_19a2oad" name="Valid message" sourceRef="Gateway_14urywv" targetRef="Activity_01x5jfb" />
+    <bpmn:endEvent id="Event_02rksz2">
+      <bpmn:incoming>Flow_0kni9ru</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0kni9ru" name="Invalid message" sourceRef="Gateway_14urywv" targetRef="Event_02rksz2" />
+    <bpmn:serviceTask id="Activity_01x5jfb" name="Validate Customer">
+      <bpmn:incoming>Flow_19a2oad</bpmn:incoming>
+      <bpmn:outgoing>Flow_1okvabc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1okvabc" sourceRef="Activity_01x5jfb" targetRef="EndEvent" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="direct-debit-process">
@@ -22,22 +37,51 @@
           <dc:Bounds x="147" y="146" width="45" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="message_validation_task_di" bpmnElement="message_validation_task">
-        <dc:Bounds x="360" y="80" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_di" bpmnElement="EndEvent">
         <dc:Bounds x="742" y="100" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="750" y="136" width="20" height="14" />
+          <dc:Bounds x="750" y="153" width="20" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="message_validation_task_di" bpmnElement="message_validation_task">
+        <dc:Bounds x="230" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_14urywv_di" bpmnElement="Gateway_14urywv" isMarkerVisible="true">
+        <dc:Bounds x="405" y="93" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02rksz2_di" bpmnElement="Event_02rksz2">
+        <dc:Bounds x="552" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01x5jfb_di" bpmnElement="Activity_01x5jfb">
+        <dc:Bounds x="560" y="78" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
         <di:waypoint x="188" y="118" />
-        <di:waypoint x="360" y="118" />
+        <di:waypoint x="230" y="118" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
-        <di:waypoint x="460" y="118" />
+        <di:waypoint x="330" y="118" />
+        <di:waypoint x="405" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19a2oad_di" bpmnElement="Flow_19a2oad">
+        <di:waypoint x="455" y="118" />
+        <di:waypoint x="560" y="118" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="470" y="97" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kni9ru_di" bpmnElement="Flow_0kni9ru">
+        <di:waypoint x="430" y="143" />
+        <di:waypoint x="430" y="250" />
+        <di:waypoint x="552" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="223" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1okvabc_di" bpmnElement="Flow_1okvabc">
+        <di:waypoint x="660" y="118" />
         <di:waypoint x="742" y="118" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

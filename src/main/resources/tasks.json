@@ -3,6 +3,10 @@
     {
       "taskName": "message_validation_task",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.MessageValidationTaskExecutor"
+    },
+    {
+      "taskName": "customer_validation_task",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.CustomerValidationTaskExecutor"
     }
   ]
 }
