@@ -23,6 +23,10 @@ public class MessageValidationTaskDefinition extends ServiceTaskDefinition {
         executionContext.getVariables().forEach((key, value) -> {
             System.out.println(key + ": " + value);
         });
+        var inputMessage = (String)executionContext.getVariable("inputMessage");
+        Optional<InputMessage> optionalInputMessage = parseInputMessage(inputMessage);
+        System.out.println("S3 path :"+ optionalInputMessage.get().fileS3Path());
+        System.out.println("Channel Ref :"+ optionalInputMessage.get().channelRef());
         System.out.println("=".repeat(80));
     }
 

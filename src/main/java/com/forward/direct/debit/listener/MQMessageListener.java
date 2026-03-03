@@ -107,9 +107,10 @@ public class MQMessageListener implements MessageListener {
         vars.put("jmsPriority",     message.getJMSPriority());
         vars.put("jmsTimestamp",    message.getJMSTimestamp());
         vars.put("sourceQueue",     queueName);
+
         if (message instanceof TextMessage) {
-            vars.put("messageType",    "TEXT");
-            vars.put("inputMessage", ((TextMessage) message).getText());
+            // vars.put("messageType",    "TEXT");
+            vars.put("inputMessage", message.getBody(String.class));
         }
         return vars;
     }
