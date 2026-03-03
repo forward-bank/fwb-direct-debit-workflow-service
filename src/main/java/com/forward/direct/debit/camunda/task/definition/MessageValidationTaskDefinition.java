@@ -23,11 +23,20 @@ public class MessageValidationTaskDefinition extends ServiceTaskDefinition {
         executionContext.getVariables().forEach((key, value) -> {
             System.out.println(key + ": " + value);
         });
-        var inputMessage = (String)executionContext.getVariable("inputMessage");
+        var inputMessage = (String)executionContext.getVariable("incomingMessage");
         Optional<InputMessage> optionalInputMessage = parseInputMessage(inputMessage);
-        System.out.println("S3 path :"+ optionalInputMessage.get().fileS3Path());
-        System.out.println("Channel Ref :"+ optionalInputMessage.get().channelRef());
+        if (optionalInputMessage.isEmpty() || !isMessageValid(optionalInputMessage.get())) {
+            throw new Exception("Failed to parse input message");
+        }
+
+        setVariable("TRIGGER_MESSAGE", optionalInputMessage.get());
+        setVariable("IS_MESSAGE_VALID", true);
         System.out.println("=".repeat(80));
+    }
+
+    private boolean isMessageValid(InputMessage inputMessage) {
+        // implement your message validation logic here
+        return true;
     }
 
     private Optional<InputMessage> parseInputMessage(String inputMessage) {

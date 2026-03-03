@@ -110,7 +110,7 @@ public class MQMessageListener implements MessageListener {
 
         if (message instanceof TextMessage) {
             // vars.put("messageType",    "TEXT");
-            vars.put("inputMessage", message.getBody(String.class));
+            vars.put("incomingMessage", message.getBody(String.class));
         }
         return vars;
     }
