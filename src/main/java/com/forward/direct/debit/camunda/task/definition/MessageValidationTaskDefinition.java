@@ -36,7 +36,6 @@ public class MessageValidationTaskDefinition extends ServiceTaskDefinition {
     }
 
     private boolean isMessageValid(InputMessage inputMessage) {
-        // implement your message validation logic here
         return true;
     }
 

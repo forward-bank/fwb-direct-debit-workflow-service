@@ -2,22 +2,20 @@ package com.forward.direct.debit.camunda.task.definition;
 
 import com.forward.direct.debit.camunda.task.common.ExecutionContext;
 
-public class CustomerValidationTaskDefinition extends ServiceTaskDefinition{
+public class SyntaxValidationRequestTaskDefinition extends ServiceTaskDefinition{
 
-    public CustomerValidationTaskDefinition(ExecutionContext executionContext) {
+    public SyntaxValidationRequestTaskDefinition(ExecutionContext executionContext) {
         super(executionContext);
     }
     @Override
     public void execute() throws Exception {
         System.out.println("=".repeat(80));
-        System.out.println("CustomerValidationTaskDefinition Executing Customer Validation Task...");
+        System.out.println("SyntaxValidationRequestTaskDefinition Executing Syntax Validation Request Task...");
         // implement a method to print all the variables in executionContext for debugging
         System.out.println("Execution Context Variables:");
         executionContext.getVariables().forEach((key, value) -> {
             System.out.println(key + ": " + value);
         });
         System.out.println("=".repeat(80));
-        setVariable("is_customer_valid", true);
-        setVariable("is_file_encrypted", false);
     }
 }
