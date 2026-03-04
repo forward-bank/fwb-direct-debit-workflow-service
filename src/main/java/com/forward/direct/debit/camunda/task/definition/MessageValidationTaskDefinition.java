@@ -26,11 +26,12 @@ public class MessageValidationTaskDefinition extends ServiceTaskDefinition {
         var inputMessage = (String)executionContext.getVariable("incomingMessage");
         Optional<InputMessage> optionalInputMessage = parseInputMessage(inputMessage);
         if (optionalInputMessage.isEmpty() || !isMessageValid(optionalInputMessage.get())) {
+            setVariable("is_message_valid", false);
             throw new Exception("Failed to parse input message");
         }
 
         setVariable("TRIGGER_MESSAGE", optionalInputMessage.get());
-        setVariable("IS_MESSAGE_VALID", true);
+        setVariable("is_message_valid", true);
         System.out.println("=".repeat(80));
     }
 

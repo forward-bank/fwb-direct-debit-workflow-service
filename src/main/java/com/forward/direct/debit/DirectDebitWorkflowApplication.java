@@ -27,5 +27,6 @@ public class DirectDebitWorkflowApplication implements CommandLineRunner {
         // Start the process using the Process Definition Key from your BPMN file
         // runtimeService.startProcessInstanceByKey("direct-debit-process");
         System.out.println("Direct Debit Workflow Service started!");
+        // { "fileDataSeq": 1001, "channelRef": "REF-001", "outputChannelCode": "DIRECT", "fileS3Path": "s3://bucket/path/to/file.csv"}
     }
 }

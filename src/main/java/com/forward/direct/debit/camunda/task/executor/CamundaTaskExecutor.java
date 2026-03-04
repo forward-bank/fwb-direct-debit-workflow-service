@@ -14,7 +14,7 @@ public  class CamundaTaskExecutor extends AbstractBpmnActivityBehavior {
 //    }
 
     private ExecutionContext buildExecutionContext(DelegateExecution delegateExecution) {
-        return new ExecutionContextImpl(delegateExecution.getVariables());
+        return new ExecutionContextImpl(delegateExecution);
     }
 
     @Override
@@ -29,7 +29,7 @@ public  class CamundaTaskExecutor extends AbstractBpmnActivityBehavior {
         taskExecutor.executeTask(executionContext);
 //        TaskContext context = new TaskContext(execution);
 //        taskDefinition.execute(context);
-        //leave(execution);  // ← this is the key difference from JavaDelegate
+        leave(execution);  // ← this is the key difference from JavaDelegate
     }
 
     @Override
