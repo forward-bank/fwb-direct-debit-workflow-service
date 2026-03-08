@@ -31,6 +31,7 @@ public class SyntaxValidationRequestTaskDefinition extends ServiceTaskDefinition
                 Map.of("paymentXmlPath", paymentXmlPath)
         );
         String correlationId = (String) executionContext.getVariable("jmsMessageId");
+        executionContext.setVariable("correlationId", correlationId);
         sendToQueue(payload, correlationId);
         System.out.println("=".repeat(80));
     }

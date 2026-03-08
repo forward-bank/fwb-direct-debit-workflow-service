@@ -57,16 +57,17 @@
       <bpmn:incoming>Flow_0qjyaz7</bpmn:incoming>
       <bpmn:outgoing>Flow_09ol1fk</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_09ol1fk" sourceRef="syntax_validation_request_task" targetRef="Activity_0msfw7a" />
-    <bpmn:receiveTask id="Activity_0msfw7a" name="Receive response from Syntax Validation Service">
+    <bpmn:sequenceFlow id="Flow_09ol1fk" sourceRef="syntax_validation_request_task" targetRef="syntax_validation_response_task" />
+    <bpmn:receiveTask id="syntax_validation_response_task" name="Receive response from Syntax Validation Service" messageRef="Message_2kvsq39">
       <bpmn:incoming>Flow_09ol1fk</bpmn:incoming>
       <bpmn:outgoing>Flow_1xxmt9b</bpmn:outgoing>
     </bpmn:receiveTask>
-    <bpmn:sequenceFlow id="Flow_1xxmt9b" sourceRef="Activity_0msfw7a" targetRef="EndEvent" />
+    <bpmn:sequenceFlow id="Flow_1xxmt9b" sourceRef="syntax_validation_response_task" targetRef="EndEvent" />
     <bpmn:sequenceFlow id="Flow_1jdd9q0" name="File is encrypted" sourceRef="Gateway_17k6s5t" targetRef="EndEvent">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_file_encrypted}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
+  <bpmn:message id="Message_2kvsq39" name="syntax_validation_response_message" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="direct-debit-process">
       <bpmndi:BPMNShape id="StartEvent_di" bpmnElement="StartEvent">
@@ -111,7 +112,7 @@
         <dc:Bounds x="884" y="78" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0msfw7a_di" bpmnElement="Activity_0msfw7a">
+      <bpmndi:BPMNShape id="Activity_0msfw7a_di" bpmnElement="syntax_validation_response_task">
         <dc:Bounds x="1020" y="78" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
