@@ -1,5 +1,5 @@
 {
-  "tasks": [
+  "ServiceTasks": [
     {
       "taskName": "message_validation_task",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.MessageValidationTaskExecutor"
@@ -11,6 +11,13 @@
     {
       "taskName": "syntax_validation_request_task",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.SyntaxValidationRequestTaskExecutor"
+    }
+  ],
+  "ReceiveTasks": [
+    {
+      "queueName": "SYNTAX.VALIDATION.RESPONSE.QUEUE",
+      "messageName": "syntax_validation_response_message",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.MessageReceivedTaskExecutor"
     }
   ]
 }
