@@ -43,6 +43,9 @@ public class BusinessProcessExecutionThread implements Callable<String> {
         System.out.println("  Business Key : " + businessKey);
 
         try {
+
+            System.out.println("✓ Triggering process: " + processDefinitionKey
+                    + " businessKey=" + businessKey);
             ProcessInstance instance = runtimeService.startProcessInstanceByKey(
                     processDefinitionKey,
                     businessKey,
@@ -50,10 +53,6 @@ public class BusinessProcessExecutionThread implements Callable<String> {
             );
 
             String processInstanceId = instance.getId();
-
-            System.out.println("[" + threadName + "] ✓ Process instance started successfully");
-            System.out.println("  Instance ID  : " + processInstanceId);
-
             return processInstanceId;  // returned via Future<String>.get()
 
         } catch (Exception e) {
