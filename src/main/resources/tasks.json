@@ -17,7 +17,7 @@
     {
       "queueName": "SYNTAX.VALIDATION.RESPONSE.QUEUE",
       "messageName": "syntax_validation_response_message",
-      "executorClass": "com.forward.direct.debit.camunda.task.executor.MessageReceivedTaskExecutor"
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.SyntaxValidationResponseTaskExecutor"
     }
   ]
 }

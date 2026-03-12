@@ -1,6 +1,12 @@
 package com.forward.direct.debit.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forward.direct.debit.camunda.CamundaBPMHelper;
+import com.forward.direct.debit.camunda.CamundaSetup;
+import com.forward.direct.debit.camunda.task.common.ExecutionContext;
+import com.forward.direct.debit.camunda.task.common.ExecutionContextImpl;
+import com.forward.direct.debit.camunda.task.common.MessageExecutionContextImpl;
+import com.forward.direct.debit.camunda.task.executor.MessageExecutor;
 import com.ibm.mq.jms.MQConnectionFactory;
 import com.ibm.msg.client.wmq.WMQConstants;
 import javax.jms.*;
@@ -8,6 +14,7 @@ import org.camunda.bpm.engine.RuntimeService;
 
 import javax.jms.Connection;
 import javax.jms.Session;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SyntaxValidationResponseListener implements MessageListener {
@@ -53,38 +60,30 @@ public class SyntaxValidationResponseListener implements MessageListener {
                 System.err.println("✗ Unsupported message type: " + message.getClass().getSimpleName());
                 return;
             }
-
             String correlationId = message.getJMSCorrelationID();
-            System.out.println("  Raw correlationId from MQ : [" + correlationId + "]");
-
-// Check what Camunda actually has stored
-            runtimeService.createProcessInstanceQuery()
-                    .variableValueEquals("correlationId", correlationId)
-                    .list()
-                    .forEach(pi -> System.out.println("  Matching process instance: " + pi.getId()));
-
-// Also list ALL active instances to see what's waiting
-            runtimeService.createProcessInstanceQuery()
-                    .list()
-                    .forEach(pi -> System.out.println("  Active instance: " + pi.getId()
-                            + " businessKey: " + pi.getBusinessKey()));
             String body          = ((TextMessage) message).getText();
+            String queueName     = MQConfig.RESPONSE_QUEUE;
 
-            System.out.println("  JMSCorrelationID : " + correlationId);
-            System.out.println("  Payload          : " + body);
+            // Resolve executor via CamundaBPMHelper (same pattern as service tasks)
+            String messageName     = CamundaSetup.getInstance().getQueueMessageNameMap().get(queueName);
+            MessageExecutor executor = CamundaBPMHelper.getMessageExecutor(messageName);
 
-            Map<String, Object> responseMap = OBJECT_MAPPER.readValue(body, Map.class);
-            String status    = (String) responseMap.get("status");
-            String errorCode = (String) responseMap.get("errorCode");
+            // Build an ExecutionContext to carry variables into the task definition
+            // Extract everything from JMS message HERE on the listener thread
+            Map<String, Object> seed = new HashMap<>();
+            seed.put("correlationId", correlationId);
+            ExecutionContext executionContext = new MessageExecutionContextImpl(seed, BPMN_MESSAGE_NAME);
+            executionContext.setVariable("correlationId", correlationId);
 
-            System.out.println("  Status    : " + status);
-            System.out.println("  ErrorCode : " + errorCode);
+            // Pass the raw JMS message — the task definition reads it directly
+            executor.executeMessage(executionContext, message);
 
-            // Correlate back to the waiting Camunda receive task
-            runtimeService.createMessageCorrelation(BPMN_MESSAGE_NAME)
+            // After the task definition has run, correlate back to Camunda
+            Map<String, Object> vars = executionContext.getVariables();
+
+            runtimeService.createMessageCorrelation(messageName)
                     .processInstanceVariableEquals("correlationId", correlationId)
-                    .setVariable("syntaxValidationStatus",    status)
-                    .setVariable("syntaxValidationErrorCode", errorCode)
+                    .setVariables(vars)
                     .correlate();
 
             System.out.println("  ✓ Camunda process instance resumed");
