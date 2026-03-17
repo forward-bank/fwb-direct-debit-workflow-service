@@ -11,6 +11,14 @@
     {
       "taskName": "syntax_validation_request_task",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.SyntaxValidationRequestTaskExecutor"
+    },
+    {
+      "taskName": "duplicate_check_task",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.DuplicateCheckTaskExecutor"
+    },
+    {
+      "taskName": "debulking_request_task",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.DebulkingRequestTaskExecutor"
     }
   ],
   "ReceiveTasks": [

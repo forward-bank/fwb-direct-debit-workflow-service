@@ -11,8 +11,9 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_2" sourceRef="message_validation_task" targetRef="message_validation_evaluation" />
     <bpmn:endEvent id="EndEvent" name="End">
-      <bpmn:incoming>Flow_1xxmt9b</bpmn:incoming>
       <bpmn:incoming>Flow_1jdd9q0</bpmn:incoming>
+      <bpmn:incoming>Flow_0qyiaeq</bpmn:incoming>
+      <bpmn:incoming>Flow_0485r33</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:exclusiveGateway id="message_validation_evaluation" name="">
       <bpmn:incoming>Flow_2</bpmn:incoming>
@@ -43,6 +44,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_customer_valid}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="Gateway_17k6s5t">
+      <bpmn:extensionElements />
       <bpmn:incoming>Flow_03gdka7</bpmn:incoming>
       <bpmn:outgoing>Flow_0qjyaz7</bpmn:outgoing>
       <bpmn:outgoing>Flow_1jdd9q0</bpmn:outgoing>
@@ -62,9 +64,39 @@
       <bpmn:incoming>Flow_09ol1fk</bpmn:incoming>
       <bpmn:outgoing>Flow_1xxmt9b</bpmn:outgoing>
     </bpmn:receiveTask>
-    <bpmn:sequenceFlow id="Flow_1xxmt9b" sourceRef="syntax_validation_response_task" targetRef="EndEvent" />
+    <bpmn:sequenceFlow id="Flow_1xxmt9b" sourceRef="syntax_validation_response_task" targetRef="syntax_validation_evaluation" />
     <bpmn:sequenceFlow id="Flow_1jdd9q0" name="File is encrypted" sourceRef="Gateway_17k6s5t" targetRef="EndEvent">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_file_encrypted}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="syntax_validation_evaluation">
+      <bpmn:incoming>Flow_1xxmt9b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f8r93k</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0qyiaeq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="duplicate_check_task" name="Check for duplicate" camunda:class="com.forward.direct.debit.camunda.task.executor.CamundaTaskExecutor">
+      <bpmn:incoming>Flow_1f8r93k</bpmn:incoming>
+      <bpmn:outgoing>Flow_14n1k4o</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1f8r93k" name="Valid Syntax" sourceRef="syntax_validation_evaluation" targetRef="duplicate_check_task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_syntax_valid}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0qyiaeq" name="Invalid Syntax" sourceRef="syntax_validation_evaluation" targetRef="EndEvent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!is_syntax_valid}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_0skt594">
+      <bpmn:incoming>Flow_14n1k4o</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jb3ets</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0485r33</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_14n1k4o" sourceRef="duplicate_check_task" targetRef="Gateway_0skt594" />
+    <bpmn:serviceTask id="debulking_request_task" name="Send file for Debulking" camunda:class="com.forward.direct.debit.camunda.task.executor.CamundaTaskExecutor">
+      <bpmn:incoming>Flow_1jb3ets</bpmn:incoming>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1jb3ets" name="File is not duplicate" sourceRef="Gateway_0skt594" targetRef="debulking_request_task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!is_file_duplicate}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0485r33" name="Duplicate file" sourceRef="Gateway_0skt594" targetRef="EndEvent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_file_duplicate}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmn:message id="Message_2kvsq39" name="syntax_validation_response_message" />
@@ -114,6 +146,20 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0msfw7a_di" bpmnElement="syntax_validation_response_task">
         <dc:Bounds x="1020" y="78" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11nftjs_di" bpmnElement="duplicate_check_task">
+        <dc:Bounds x="1290" y="78" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_008mhbe_di" bpmnElement="syntax_validation_evaluation" isMarkerVisible="true">
+        <dc:Bounds x="1184" y="93" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0skt594_di" bpmnElement="Gateway_0skt594" isMarkerVisible="true">
+        <dc:Bounds x="1465" y="93" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1onsm0z_di" bpmnElement="debulking_request_task">
+        <dc:Bounds x="1570" y="78" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
@@ -171,8 +217,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1xxmt9b_di" bpmnElement="Flow_1xxmt9b">
         <di:waypoint x="1120" y="118" />
-        <di:waypoint x="1199" y="118" />
-        <di:waypoint x="1199" y="229" />
+        <di:waypoint x="1184" y="118" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jdd9q0_di" bpmnElement="Flow_1jdd9q0">
         <di:waypoint x="799" y="143" />
@@ -180,6 +225,41 @@
         <di:waypoint x="1181" y="247" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="810" y="223" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f8r93k_di" bpmnElement="Flow_1f8r93k">
+        <di:waypoint x="1234" y="118" />
+        <di:waypoint x="1290" y="118" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1219" y="83" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qyiaeq_di" bpmnElement="Flow_0qyiaeq">
+        <di:waypoint x="1209" y="143" />
+        <di:waypoint x="1209" y="186" />
+        <di:waypoint x="1199" y="186" />
+        <di:waypoint x="1199" y="229" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1215" y="179" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14n1k4o_di" bpmnElement="Flow_14n1k4o">
+        <di:waypoint x="1390" y="118" />
+        <di:waypoint x="1465" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jb3ets_di" bpmnElement="Flow_1jb3ets">
+        <di:waypoint x="1515" y="118" />
+        <di:waypoint x="1570" y="118" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1512" y="73" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0485r33_di" bpmnElement="Flow_0485r33">
+        <di:waypoint x="1490" y="143" />
+        <di:waypoint x="1490" y="247" />
+        <di:waypoint x="1217" y="247" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1418" y="201" width="64" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
