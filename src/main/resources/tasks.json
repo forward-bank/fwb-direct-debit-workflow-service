@@ -26,6 +26,11 @@
       "queueName": "SYNTAX.VALIDATION.RESPONSE.QUEUE",
       "messageName": "syntax_validation_response_message",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.SyntaxValidationResponseTaskExecutor"
+    },
+    {
+      "queueName": "FILE.PROCESS.SERVICE.RESPONSE.QUEUE",
+      "messageName": "debulking_response_message",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.DebulkingResponseTaskExecutor"
     }
   ]
 }

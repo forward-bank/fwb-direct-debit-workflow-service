@@ -1,10 +1,7 @@
 package com.forward.direct.debit.config;
 
-import com.forward.direct.debit.listener.MQConfig;
-import com.forward.direct.debit.listener.MQConnectionManager;
-import com.forward.direct.debit.listener.MQMessageListener;
+import com.forward.direct.debit.listener.*;
 import com.forward.direct.debit.executor.CamundaProcessExecutor;
-import com.forward.direct.debit.listener.SyntaxValidationResponseListener;
 import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -53,6 +50,14 @@ public class MQListenerConfiguration {
             RuntimeService runtimeService) {
         return new SyntaxValidationResponseListener(
                 new MQConfig(host, port, channel, queueManager),
+                runtimeService);
+    }
+
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    public DebulkingResponseListener debulkingResponseListener(
+            RuntimeService runtimeService) {
+        return new DebulkingResponseListener(
+                new DebulkingMQConfig(host, port, channel, queueManager),
                 runtimeService);
     }
 
