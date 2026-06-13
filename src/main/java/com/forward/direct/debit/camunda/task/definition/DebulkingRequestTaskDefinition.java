@@ -5,6 +5,7 @@ import com.forward.direct.debit.camunda.model.DebulkingPain008Request;
 import com.forward.direct.debit.camunda.task.common.ExecutionContext;
 import com.ibm.mq.jms.MQConnectionFactory;
 import com.ibm.msg.client.wmq.WMQConstants;
+import org.springframework.context.ApplicationContext;
 
 import javax.jms.*;
 
@@ -12,8 +13,8 @@ public class DebulkingRequestTaskDefinition extends ServiceTaskDefinition{
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public DebulkingRequestTaskDefinition(ExecutionContext executionContext) {
-        super(executionContext);
+    public DebulkingRequestTaskDefinition(ExecutionContext executionContext, ApplicationContext applicationContext) {
+        super(executionContext, applicationContext);
     }
 
     @Override

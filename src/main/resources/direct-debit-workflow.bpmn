@@ -15,6 +15,7 @@
       <bpmn:incoming>Flow_0qyiaeq</bpmn:incoming>
       <bpmn:incoming>Flow_0485r33</bpmn:incoming>
       <bpmn:incoming>fsn_during_debulking</bpmn:incoming>
+      <bpmn:incoming>Flow_15nbdig</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:exclusiveGateway id="message_validation_evaluation" name="">
       <bpmn:incoming>Flow_2</bpmn:incoming>
@@ -111,15 +112,17 @@
       <bpmn:outgoing>fsn_during_debulking</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1i9k6g0" sourceRef="debulking_response_task" targetRef="Gateway_1rxx0m7" />
-    <bpmn:serviceTask id="Activity_19xyh75" name="Dispatch to SepaDDO Orchestration Service">
+    <bpmn:serviceTask id="sddo_orchestration_dispatching_task" name="Dispatch to SepaDDO Orchestration Service" camunda:class="com.forward.direct.debit.camunda.task.executor.CamundaTaskExecutor">
       <bpmn:incoming>debulking_completed</bpmn:incoming>
+      <bpmn:outgoing>Flow_15nbdig</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="debulking_completed" name="Debulking completed" sourceRef="Gateway_1rxx0m7" targetRef="Activity_19xyh75">
+    <bpmn:sequenceFlow id="debulking_completed" name="Debulking completed" sourceRef="Gateway_1rxx0m7" targetRef="sddo_orchestration_dispatching_task">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_debulking_completed}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="fsn_during_debulking" name="FSN raised during debulking" sourceRef="Gateway_1rxx0m7" targetRef="EndEvent">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!is_debulking_completed}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_15nbdig" sourceRef="sddo_orchestration_dispatching_task" targetRef="EndEvent" />
   </bpmn:process>
   <bpmn:message id="Message_2kvsq39" name="syntax_validation_response_message" />
   <bpmn:message id="Message_02nc2qb" name="debulking_response_message" />
@@ -192,7 +195,7 @@
       <bpmndi:BPMNShape id="Gateway_1rxx0m7_di" bpmnElement="Gateway_1rxx0m7" isMarkerVisible="true">
         <dc:Bounds x="1935" y="93" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_19xyh75_di" bpmnElement="Activity_19xyh75">
+      <bpmndi:BPMNShape id="Activity_19xyh75_di" bpmnElement="sddo_orchestration_dispatching_task">
         <dc:Bounds x="2066" y="78" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -316,8 +319,13 @@
         <di:waypoint x="1960" y="247" />
         <di:waypoint x="1217" y="247" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1931" y="192" width="89" height="27" />
+          <dc:Bounds x="1968" y="182" width="89" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15nbdig_di" bpmnElement="Flow_15nbdig">
+        <di:waypoint x="2116" y="158" />
+        <di:waypoint x="2116" y="247" />
+        <di:waypoint x="1217" y="247" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

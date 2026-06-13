@@ -1,11 +1,12 @@
 package com.forward.direct.debit.camunda.task.definition;
 
 import com.forward.direct.debit.camunda.task.common.ExecutionContext;
+import org.springframework.context.ApplicationContext;
 
 public class CustomerValidationTaskDefinition extends ServiceTaskDefinition{
 
-    public CustomerValidationTaskDefinition(ExecutionContext executionContext) {
-        super(executionContext);
+    public CustomerValidationTaskDefinition(ExecutionContext executionContext, ApplicationContext applicationContext) {
+        super(executionContext, applicationContext);
     }
     @Override
     public void execute() throws Exception {

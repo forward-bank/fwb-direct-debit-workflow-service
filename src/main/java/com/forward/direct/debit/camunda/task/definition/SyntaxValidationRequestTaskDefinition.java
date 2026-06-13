@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forward.direct.debit.camunda.task.common.ExecutionContext;
 import com.ibm.mq.jms.MQConnectionFactory;
 import com.ibm.msg.client.wmq.WMQConstants;
+import org.springframework.context.ApplicationContext;
 
 import javax.jms.*;
 import java.util.Map;
@@ -12,8 +13,8 @@ public class SyntaxValidationRequestTaskDefinition extends ServiceTaskDefinition
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public SyntaxValidationRequestTaskDefinition(ExecutionContext executionContext) {
-        super(executionContext);
+    public SyntaxValidationRequestTaskDefinition(ExecutionContext executionContext, ApplicationContext applicationContext) {
+        super(executionContext, applicationContext);
     }
 
     @Override

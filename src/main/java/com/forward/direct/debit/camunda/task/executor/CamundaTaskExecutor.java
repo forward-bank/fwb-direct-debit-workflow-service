@@ -3,6 +3,7 @@ package com.forward.direct.debit.camunda.task.executor;
 import com.forward.direct.debit.camunda.CamundaBPMHelper;
 import com.forward.direct.debit.camunda.task.common.ExecutionContext;
 import com.forward.direct.debit.camunda.task.common.ExecutionContextImpl;
+import com.forward.direct.debit.config.ApplicationContextHolder;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.impl.bpmn.behavior.AbstractBpmnActivityBehavior;
 import org.camunda.bpm.engine.impl.pvm.delegate.ActivityExecution;
@@ -26,7 +27,7 @@ public  class CamundaTaskExecutor extends AbstractBpmnActivityBehavior {
         // build TaskContext
         //TaskContext taskContext = buildTaskContext(execution);
         ExecutionContext executionContext = buildExecutionContext(execution);
-        taskExecutor.executeTask(executionContext);
+        taskExecutor.executeTask(executionContext, ApplicationContextHolder.getApplicationContext());
 //        TaskContext context = new TaskContext(execution);
 //        taskDefinition.execute(context);
         leave(execution);  // ← this is the key difference from JavaDelegate

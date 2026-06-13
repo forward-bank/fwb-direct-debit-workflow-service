@@ -5,13 +5,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forward.direct.debit.camunda.model.InputMessage;
 import com.forward.direct.debit.camunda.task.common.ExecutionContext;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 
 public class MessageValidationTaskDefinition extends ServiceTaskDefinition {
 
-    public MessageValidationTaskDefinition(ExecutionContext executionContext) {
-        super(executionContext);
+    public MessageValidationTaskDefinition(ExecutionContext executionContext, ApplicationContext applicationContext) {
+        super(executionContext, applicationContext);
     }
 
     @Override

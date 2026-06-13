@@ -19,6 +19,10 @@
     {
       "taskName": "debulking_request_task",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.DebulkingRequestTaskExecutor"
+    },
+    {
+      "taskName": "sddo_orchestration_dispatching_task",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.OrchestrationWorkflowDispatchTaskExecutor"
     }
   ],
   "ReceiveTasks": [

@@ -27,5 +27,6 @@ public class DebulkingResponseTaskDefinition extends MessageReceiveTaskDefinitio
         String messageContent = message.getBody(String.class);
         System.out.println(messageContent);
         System.out.println("=".repeat(80));
+        setVariable("is_debulking_completed", true);
     }
 }

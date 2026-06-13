@@ -15,8 +15,8 @@ public class OrchestrationWorkflowDispatchTaskDefinition extends ServiceTaskDefi
 
     public OrchestrationWorkflowDispatchTaskDefinition(ExecutionContext executionContext,
                                                        ApplicationContext applicationContext) {
-        super(executionContext);
-        this.fileProcessServiceClient = applicationContext.getBean(FileProcessServiceClient.class);
+        super(executionContext,applicationContext);
+        fileProcessServiceClient = applicationContext.getBean(FileProcessServiceClient.class);
     }
 
     @Override
