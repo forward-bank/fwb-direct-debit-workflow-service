@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../fwb-file-process-service" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../fwb-syntax-validation-service" vcs="Git" />
   </component>
 </project>

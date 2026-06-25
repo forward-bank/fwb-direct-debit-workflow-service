@@ -27,9 +27,9 @@ public class SyntaxValidationRequestTaskDefinition extends ServiceTaskDefinition
             System.out.println(key + ": " + value);
         });
 
-        String paymentXmlPath = "FWB_DIRECT_DEBIT/PAYMENT_FILES/2026/02/04/INCOMING/I1234567890123.FWB.pain00800108.ABCD123.PM.pgp_12345.145.xml";
+        String paymentFilePath = "FWB_DIRECT_DEBIT/PAYMENT_FILES/2026/02/04/INCOMING/I1234567890123.FWB.pain00800108.ABCD123.PM.pgp_12345.145.xml";
         String payload = OBJECT_MAPPER.writeValueAsString(
-                Map.of("paymentXmlPath", paymentXmlPath)
+                Map.of("paymentFilePath", paymentFilePath)
         );
         String correlationId = (String) executionContext.getVariable("jmsMessageId");
         executionContext.setVariable("correlationId", correlationId);
