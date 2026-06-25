@@ -178,6 +178,16 @@ A Spring Boot + Camunda BPM 7 workflow engine that orchestrates the end-to-end p
 
 A message arrives on `FIRST.TEST.QUEUE`. `MQMessageListener.onMessage()` extracts the JMS metadata and message body into a flat `Map<String, Object>`, then submits a `BusinessProcessExecutionThread` to `CamundaProcessExecutor`. The thread calls `runtimeService.startProcessInstanceByKey("direct-debit-process", businessKey, vars)`, creating a new process instance. The JMS message ID becomes the `businessKey`.
 
+#### Sample Input MQ Message
+```json
+{
+  "fileDataSeq": 314900,
+  "channelRef": "I1234567890123",
+  "outputChannelCode": "ABB",
+  "fileS3Path": "FWB_DIRECT_DEBIT/PAYMENT_FILES/2026/02/04/INCOMING/I1234567890123.FWB.pain00800108.ABCD123.PM.pgp_12345.145"
+}
+```
+
 Key process variables set at startup:
 - `incomingMessage` — the raw JSON body (an `InputMessage`)
 - `jmsMessageId` — used as `correlationId` for downstream MQ calls
