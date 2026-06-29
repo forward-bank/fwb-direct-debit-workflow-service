@@ -24,11 +24,12 @@ public record FileProcessServiceClient(RestTemplate restTemplate) {
     // ── Duplicate check ───────────────────────────────────────────────────────
 
     /**
-     * Step 1 of duplicate check: retrieve the MsgId for the given fileId.
-     * Calls GET /file/{fileId}/getMessageId.
+     * Step 1 of duplicate check: download the payment XML from S3 and extract
+     * its MsgId. Calls GET /file/{fileId}/getMessageId?fileS3Path=...
      */
-    public GetMessageIdResponse getMessageId(long fileId) {
-        String url = BASE_URL + "/file/" + fileId + "/getMessageId";
+    public GetMessageIdResponse getMessageId(long fileId, String fileS3Path) {
+        String url = BASE_URL + "/file/" + fileId + "/getMessageId?fileS3Path="
+                + org.springframework.web.util.UriUtils.encodeQueryParam(fileS3Path, "UTF-8");
         System.out.println("[FileProcessServiceClient] GET " + url);
         return restTemplate.getForObject(url, GetMessageIdResponse.class);
     }

@@ -45,20 +45,22 @@ public class DuplicateCheckTaskDefinition extends ServiceTaskDefinition {
                     "TRIGGER_MESSAGE process variable is null — message_validation_task must run first");
         }
 
-        long fileId = triggerMessage.fileDataSeq();   // fileDataSeq == fileId
+        long fileId    = triggerMessage.fileDataSeq();   // fileDataSeq == fileId
+        String fileS3Path = triggerMessage.fileS3Path();
         // custId is not part of the current InputMessage schema; default to 0 until
         // the upstream trigger message is extended to carry it.
         // TODO: add custId to InputMessage and the inbound MQ payload.
         long custId = 0L;
 
         System.out.println("  fileId (fileDataSeq) : " + fileId);
+        System.out.println("  fileS3Path           : " + fileS3Path);
         System.out.println("  custId               : " + custId);
 
         FileProcessServiceClient client =
                 applicationContext.getBean(FileProcessServiceClient.class);
 
-        // ── Step 2: get the MsgId for this file from fwb-file-process-service ─
-        GetMessageIdResponse msgIdResponse = client.getMessageId(fileId);
+        // ── Step 2: download XML from S3 and extract MsgId ───────────────────
+        GetMessageIdResponse msgIdResponse = client.getMessageId(fileId, fileS3Path);
         String msgId = msgIdResponse != null ? msgIdResponse.getMsgId() : "";
 
         System.out.println("  msgId from getMessageId: " + msgId);
