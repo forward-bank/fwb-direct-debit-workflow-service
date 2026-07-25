@@ -1,5 +1,6 @@
 package com.forward.direct.debit.camunda.task.definition;
 
+import com.forward.direct.debit.camunda.model.InputMessage;
 import com.forward.direct.debit.camunda.task.common.ExecutionContext;
 import org.springframework.context.ApplicationContext;
 
@@ -19,6 +20,17 @@ public class CustomerValidationTaskDefinition extends ServiceTaskDefinition{
         });
         System.out.println("=".repeat(80));
         setVariable("is_customer_valid", true);
-        setVariable("is_file_encrypted", false);
+
+        InputMessage triggerMessage = (InputMessage) executionContext.getVariable("TRIGGER_MESSAGE");
+        if (triggerMessage == null) {
+            throw new IllegalStateException(
+                    "TRIGGER_MESSAGE process variable is null");
+        }
+        String fileS3Path = triggerMessage.fileS3Path();
+        if(fileS3Path.contains(".pgp")) {
+            setVariable("is_file_encrypted", true);
+        } else{
+            setVariable("is_file_encrypted", false);
+        }
     }
 }

@@ -1,0 +1,93 @@
+package com.forward.direct.debit.camunda.task.definition;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forward.direct.debit.camunda.task.common.ExecutionContext;
+import com.forward.direct.debit.integrations.security.SecurityServiceRequest;
+import com.ibm.mq.jms.MQConnectionFactory;
+import com.ibm.msg.client.wmq.WMQConstants;
+import org.springframework.context.ApplicationContext;
+
+import javax.jms.*;
+
+public class SecurityServiceRequestTaskDefinition extends ServiceTaskDefinition{
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    public SecurityServiceRequestTaskDefinition(ExecutionContext executionContext, ApplicationContext applicationContext) {
+        super(executionContext, applicationContext);
+    }
+
+    @Override
+    public void execute() throws Exception {
+        System.out.println("=".repeat(80));
+        System.out.println("SecurityServiceRequestTaskDefinition Executing Security Service Request Task...");
+        // implement a method to print all the variables in executionContext for debugging
+        System.out.println("Execution Context Variables:");
+        executionContext.getVariables().forEach((key, value) -> {
+            System.out.println(key + ": " + value);
+        });
+
+        // The fileS3Path comes from the InputMessage captured during message_validation_task.
+        // It is an s3:// URI e.g. "s3://fwb-bucket/FWB_DIRECT_DEBIT/PAYMENT_FILES/.../file.xml"
+        // Fall back to the trigger message's fileS3Path if available, otherwise use a default.
+        String fileS3Path = null;
+        Object triggerMsg = executionContext.getVariable("TRIGGER_MESSAGE");
+        if (triggerMsg instanceof com.forward.direct.debit.camunda.model.InputMessage inputMessage) {
+            fileS3Path = inputMessage.fileS3Path();
+        }
+        if (fileS3Path == null || fileS3Path.isBlank()) {
+            // Fallback for development / testing
+            fileS3Path = "s3://forward-bank-payments/FWB_DIRECT_DEBIT/PAYMENT_FILES/2026/02/04/INCOMING/I1234567890123.FWB.pain00800108.ABCD123.PM.pgp_12345";
+        }
+
+        String payload = OBJECT_MAPPER.writeValueAsString(
+                createSecurityServiceRequest(1001l, fileS3Path, false)
+        );
+        String correlationId = (String) executionContext.getVariable("jmsMessageId");
+        executionContext.setVariable("correlationId", correlationId);
+        sendToQueue(payload, correlationId);
+        System.out.println("=".repeat(80));
+    }
+
+    private SecurityServiceRequest createSecurityServiceRequest(Long custId, String fileS3Path
+    , boolean pgpSigningEnabled) {
+        SecurityServiceRequest request = new SecurityServiceRequest(custId, fileS3Path, pgpSigningEnabled);
+        return request;
+    }
+
+    // -------------------------------------------------------------------------
+    // Creates a dedicated short-lived connection just for this send.
+    // Completely independent from the inbound MQConnectionManager — no
+    // shared session, no threading concerns.
+    // -------------------------------------------------------------------------
+    private void sendToQueue(String payload, String correlationId) throws JMSException {
+        MQConnectionFactory factory = new MQConnectionFactory();
+        factory.setHostName("localhost");
+        factory.setPort(1414);
+        factory.setChannel("SYSTEM.DEF.SVRCONN");
+        factory.setQueueManager("MY.TEST.QMNGR");
+        factory.setTransportType(WMQConstants.WMQ_CM_CLIENT);
+
+        final String securityServiceRequestQueueName = "SECURITY.SERVICE.REQUEST.QUEUE";
+        Connection connection = null;
+        Session session       = null;
+        MessageProducer producer = null;
+        try {
+            connection = factory.createConnection();
+            connection.start();
+            session  = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Queue queue = session.createQueue(securityServiceRequestQueueName);
+            producer = session.createProducer(queue);
+            TextMessage message = session.createTextMessage(payload);
+            message.setJMSCorrelationID(correlationId);
+            producer.send(message);
+            System.out.println("✓ Message sent to " + securityServiceRequestQueueName);
+            System.out.println("  Payload        : " + payload);
+            System.out.println("  Correlation ID : " + correlationId);
+        } finally {
+            if (producer   != null) try { producer.close();   } catch (JMSException e) { System.err.println("WARN: " + e.getMessage()); }
+            if (session    != null) try { session.close();    } catch (JMSException e) { System.err.println("WARN: " + e.getMessage()); }
+            if (connection != null) try { connection.close(); } catch (JMSException e) { System.err.println("WARN: " + e.getMessage()); }
+        }
+    }
+}

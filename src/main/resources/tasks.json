@@ -9,6 +9,10 @@
       "executorClass": "com.forward.direct.debit.camunda.task.executor.CustomerValidationTaskExecutor"
     },
     {
+      "taskName": "security_service_request_task",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.SecurityServiceRequestTaskExecutor"
+    },
+    {
       "taskName": "syntax_validation_request_task",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.SyntaxValidationRequestTaskExecutor"
     },
