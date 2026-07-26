@@ -41,7 +41,8 @@ public class SecurityServiceRequestTaskDefinition extends ServiceTaskDefinition{
         }
 
         String payload = OBJECT_MAPPER.writeValueAsString(
-                createSecurityServiceRequest(1001l, fileS3Path, false)
+                //createSecurityServiceRequest(1001l, fileS3Path, false)
+                createSecurityServiceRequest(1001l, fileS3Path, true)
         );
         String correlationId = (String) executionContext.getVariable("jmsMessageId");
         executionContext.setVariable("correlationId", correlationId);
