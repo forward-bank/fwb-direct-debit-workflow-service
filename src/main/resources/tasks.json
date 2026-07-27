@@ -31,6 +31,11 @@
   ],
   "ReceiveTasks": [
     {
+      "queueName": "SECURITY.SERVICE.RESPONSE.QUEUE",
+      "messageName": "security_service_response_message",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.SecurityServiceResponseTaskExecutor"
+    },
+    {
       "queueName": "SYNTAX.VALIDATION.RESPONSE.QUEUE",
       "messageName": "syntax_validation_response_message",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.SyntaxValidationResponseTaskExecutor"

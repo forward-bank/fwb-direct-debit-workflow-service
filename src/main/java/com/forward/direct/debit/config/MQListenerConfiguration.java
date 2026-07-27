@@ -46,6 +46,14 @@ public class MQListenerConfiguration {
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")
+    public SecurityServiceResponseListener securityServiceResponseListener(
+            RuntimeService runtimeService) {
+        return new SecurityServiceResponseListener(
+                new SecurityServiceResponseMQConfig(host, port, channel, queueManager),
+                runtimeService);
+    }
+
+    @Bean(initMethod = "start", destroyMethod = "stop")
     public SyntaxValidationResponseListener syntaxValidationResponseListener(
             RuntimeService runtimeService) {
         return new SyntaxValidationResponseListener(

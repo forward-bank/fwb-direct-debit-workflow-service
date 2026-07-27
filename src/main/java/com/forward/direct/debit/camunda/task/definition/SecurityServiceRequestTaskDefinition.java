@@ -28,16 +28,11 @@ public class SecurityServiceRequestTaskDefinition extends ServiceTaskDefinition{
         });
 
         // The fileS3Path comes from the InputMessage captured during message_validation_task.
-        // It is an s3:// URI e.g. "s3://fwb-bucket/FWB_DIRECT_DEBIT/PAYMENT_FILES/.../file.xml"
-        // Fall back to the trigger message's fileS3Path if available, otherwise use a default.
+        // It is an s3:// URI e.g. "s3://fwb-bucket/FWB_DIRECT_DEBIT/PAYMENT_FILES/.../file.PM.pgp"
         String fileS3Path = null;
         Object triggerMsg = executionContext.getVariable("TRIGGER_MESSAGE");
         if (triggerMsg instanceof com.forward.direct.debit.camunda.model.InputMessage inputMessage) {
             fileS3Path = inputMessage.fileS3Path();
-        }
-        if (fileS3Path == null || fileS3Path.isBlank()) {
-            // Fallback for development / testing
-            fileS3Path = "s3://forward-bank-payments/FWB_DIRECT_DEBIT/PAYMENT_FILES/2026/02/04/INCOMING/I1234567890123.FWB.pain00800108.ABCD123.PM.pgp_12345";
         }
 
         String payload = OBJECT_MAPPER.writeValueAsString(
@@ -45,7 +40,6 @@ public class SecurityServiceRequestTaskDefinition extends ServiceTaskDefinition{
                 createSecurityServiceRequest(1001l, fileS3Path, true)
         );
         String correlationId = (String) executionContext.getVariable("jmsMessageId");
-        executionContext.setVariable("correlationId", correlationId);
         sendToQueue(payload, correlationId);
         System.out.println("=".repeat(80));
     }
