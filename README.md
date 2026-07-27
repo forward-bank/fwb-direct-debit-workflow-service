@@ -2,6 +2,8 @@
 
 A Spring Boot + Camunda BPM 7 workflow engine that orchestrates the end-to-end processing of Direct Debit (pain.008) payment files. Incoming files are validated, checked for duplicates, sent for syntax validation and debulking via IBM MQ, and finally dispatched to the SepaDDO orchestration service.
 
+!["Camunda Direct Debit Workflow Process"](direct-debit-workflow.svg)
+
 ---
 
 ## Table of Contents
