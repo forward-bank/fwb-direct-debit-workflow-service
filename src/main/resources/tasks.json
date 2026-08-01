@@ -13,6 +13,10 @@
       "executorClass": "com.forward.direct.debit.camunda.task.executor.SecurityServiceRequestTaskExecutor"
     },
     {
+      "taskName": "archive_decrypted_file_information_task",
+      "executorClass": "com.forward.direct.debit.camunda.task.executor.ArchivalTaskExecutor"
+    },
+    {
       "taskName": "syntax_validation_request_task",
       "executorClass": "com.forward.direct.debit.camunda.task.executor.SyntaxValidationRequestTaskExecutor"
     },

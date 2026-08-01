@@ -40,6 +40,7 @@ public class SecurityServiceRequestTaskDefinition extends ServiceTaskDefinition{
                 createSecurityServiceRequest(1001l, fileS3Path, true)
         );
         String correlationId = (String) executionContext.getVariable("jmsMessageId");
+        executionContext.setVariable("correlationId", correlationId);  // required for response correlation
         sendToQueue(payload, correlationId);
         System.out.println("=".repeat(80));
     }
