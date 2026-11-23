@@ -294,9 +294,48 @@ The process **suspends** again. `DebulkingResponseListener` on `FILE.PROCESS.SER
 
 **Gateway:** routes to `sddo_orchestration_dispatching_task` if debulking completed, or to `End (FSN during Debulking)` if a failure notice (FSN) was raised.
 
+The debulking response from fwb-file-process-service contains response code, the response code is cheked in
+the debulking response task in fwb-direct-debit-workflow-service to determine whether debulking completed
+successfully (all validations passed, no validation failure), or debulking completed with failure (validation 
+failed during debulking).
+
+Below is FsnCode enum in fwb-direct-debit-workflow-service which maps to response code received in debulking response.
+
+```java
+public enum FsnCode {
+    POSITIVE("ACCP"),
+    FILE_DUPLICATED("DU02"),
+    SYNTAX_CHECK_FAILED("FF02"),
+    INCORRECT_NUM_OF_TRANSACTIONS("FF03"),
+    FILE_FAILED_INVALID_VALUE_IN_CTRL_SUM("FF04"),
+    INCORRECT_INITIATING_PARTY("FF05"),
+    INCORRECT_PRIVATE_IDENTIFICATION("FF06"),
+    INCORRECT_MESSAGE_DEFINITION_ID("FF08"),
+    CUSTOMER_IS_SETUP_WITH_UNSUPPORTED_SECURITY_MECHANISM("DS00");
+
+    private final String code;
+
+    public static FsnCode getByCode(String code) {
+        return Arrays.stream(values())
+                .filter(fsnCode -> fsnCode.getCode().equals(code))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static List<FsnCode> getDebulkingFailedFSNCodes() {
+        return Arrays.asList(INCORRECT_INITIATING_PARTY, INCORRECT_NUM_OF_TRANSACTIONS,
+                INCORRECT_MESSAGE_DEFINITION_ID, INCORRECT_PRIVATE_IDENTIFICATION, CUSTOMER_IS_SETUP_WITH_UNSUPPORTED_SECURITY_MECHANISM);
+    }
+}
+```
+
 ---
 
 ### 9. sddo_orchestration_dispatching_task (Service Task)
+
+// this needs to be changed from REST call to submitting message to
+// mq which fwb-direct-debit-orchestration-service listens to
+// the mq dispatch message will just contain the (fileId, custId)
 
 **Executor:** `OrchestrationWorkflowDispatchTaskExecutor` → `OrchestrationWorkflowDispatchTaskDefinition`
 

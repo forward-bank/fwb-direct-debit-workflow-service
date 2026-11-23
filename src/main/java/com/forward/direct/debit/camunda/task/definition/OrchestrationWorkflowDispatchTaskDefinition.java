@@ -41,6 +41,9 @@ public class OrchestrationWorkflowDispatchTaskDefinition extends ServiceTaskDefi
     }
 
     private DispatchResponse dispatchOrchestrationWorkflow(Long customerId, Long fileId) {
+        // this needs to be changed from REST call to submitting message to
+        // mq which fwb-direct-debit-orchestration-service listens to
+        // the mq dispatch message will just contain the (fileId, custId)
         System.out.println("Dispatching orchestration workflow...");
         return fileProcessServiceClient.dispatch(customerId, fileId);
     }
